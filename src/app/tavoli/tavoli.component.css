@@ -1,0 +1,168 @@
+
+.container_tavoli {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.tavoli {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: center;
+  gap: 20px;
+}
+
+.tavolo {
+  position: relative; /* <-- aggiunto */
+  width: 120px;
+  height: 160px;
+  background-color: #f8f8f8;
+  border-radius: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.2sease-in-out;
+}
+
+.tavolo.ingrandito {
+  transform: scale(1.1);
+}
+
+.tavolo_icona {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 110px;
+}
+
+.tavolo_icona img {
+  height: 110px;
+}
+
+.tavolo_numero {
+  font-family: "Dangrek", serif;
+  font-size: 20px;
+  line-height: 20px;
+  height: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.tavolo_info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 30%;
+  margin-top: 10px;
+}
+
+.tavolo_posti {
+  background-image: url('/assets/Coperti_icona.png');
+  background-size: cover;
+  height: 20px;
+  width: 20px;
+}
+.tavolo_dati{
+  display: flex;
+  align-items: center;
+  height: 20px;
+}
+
+.costo_api{
+  align-self: flex-end;
+}
+.tavolo_costo {
+  background-size: cover;
+  height: 16px;
+  width: 13px;
+}
+
+.tavolo_stato {
+  display: none;
+  font-size: 14px;
+  color: #333;
+}
+
+.hidden {
+  display: none;
+}
+
+.show {
+  display: flex;
+}
+
+.tavolo_icona {
+  height: 80px;
+  width: 80px;
+  background-size: cover;
+}
+
+.tavolo_libero {
+  background-image: url('/assets/tavolo_icona_verde.png');
+}
+
+.tavolo_occupato {
+  background-image: url('/assets/tavolo_icona_rosso.png');
+}
+
+.tavolo_reset {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #666;
+  cursor: pointer;
+  z-index: 3;
+  background-color: transparent;
+  border: none;
+}
+
+.tavolo_menu {
+  position: absolute;
+  top: 35px;
+  right: 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
+  padding: 5px 0;
+  z-index: 3;
+  width: 120px;
+}
+
+.tavolo_menu_item {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+}
+
+.tavolo_menu_item:hover {
+  background-color: #f5f5f5;
+}
+
+.menu_schermata{
+  height: 100%;
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  background-color: white;
+}
+.menu_navbar{
+  display: flex;
+  flex-direction: column;
+}
+.menu_tipologie_drink, .menu_tipologie_food{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}

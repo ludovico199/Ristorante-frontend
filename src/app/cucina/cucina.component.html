@@ -1,0 +1,46 @@
+<div class="OrdiniContainer">
+  <div *ngFor="let ordine of ordini" class="OrdineCard">
+    <h3 class="OrdineCard_titolo">Tavolo {{ ordine.tavolo_id }}</h3>
+
+    <!-- 1) Items del turno 6, senza titolo -->
+    <ng-container *ngIf="((ordine.groupedMenu?.['6']) ?? []).length > 0">
+      <div
+        *ngFor="let piatto of (ordine.groupedMenu?.['6'] ?? [])"
+        class="OrdineCard_itemRow"
+      >
+        <div class="OrdineCard_itemInfo">
+          <span class="OrdineCard_itemNome">{{ piatto.nome }}</span>
+          <span class="OrdineCard_itemQuantita">x{{ piatto.pivot.quantita }}</span>
+        </div>
+        <div *ngIf="piatto.pivot.note" class="OrdineCard_itemNote">
+          Note: {{ piatto.pivot.note }}
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- 2) Poi tutti gli altri turni (escludendo '6') -->
+    <ng-container *ngFor="let turno of getTurni(ordine)">
+      <ng-container *ngIf="turno !== '6'">
+        <div class="OrdineCard_turnoTitolo">
+          {{ turno === 'NO' ? 'No Comanda' : 'Turno ' + turno }}
+        </div>
+        <div
+          *ngFor="let piatto of (ordine.groupedMenu?.[turno] ?? [])"
+          class="OrdineCard_itemRow"
+        >
+          <div class="OrdineCard_itemInfo">
+            <span class="OrdineCard_itemNome">{{ piatto.nome }}</span>
+            <span class="OrdineCard_itemQuantita">x{{ piatto.pivot.quantita }}</span>
+          </div>
+          <div *ngIf="piatto.pivot.note" class="OrdineCard_itemNote">
+            Note: {{ piatto.pivot.note }}
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <button class="OrdineCard_button" (click)="chiudiOrdine(ordine.id)">
+      Chiudi Ordine
+    </button>
+  </div>
+</div>

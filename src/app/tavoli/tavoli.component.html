@@ -1,0 +1,37 @@
+<div class="container_tavoli">
+  <div class="tavoli">
+    <div class="tavolo" *ngFor="let tavolo of tavoli" (click)="gestiscitavolo(tavolo)">
+
+      <div class="tavolo_icona" [ngClass]="getClasseTavolo(tavolo)"></div>
+
+      <!-- Bottone reset (chiama toggleMenu) -->
+      <div class="tavolo_reset" (click)="toggleMenu(tavolo, $event)">×</div>
+
+      <!-- Menu contestuale (visualizzato solo quando mostraMenu è true) -->
+      <div class="tavolo_menu" *ngIf="tavolo.mostraMenu">
+        <div class="tavolo_menu_item" (click)="chiudiTavolo(tavolo, $event)">Chiudi tavolo</div>
+      </div>
+
+      <div class="tavolo_numero">T{{ tavolo.numero_tavolo }}</div>
+
+      <div class="tavolo_info">
+        <div class="tavolo_dati">
+          <div class="tavolo_posti"></div>
+          <div>{{ tavolo.numero_coperti }}</div>
+        </div>
+        <div class="tavolo_dati">
+          <div class="tavolo_costo"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Menu -->
+<app-menu [isVisible]="isMenuVisible" (closeMenu)="chiudiMenu()"></app-menu>
+<!-- Coperti -->
+<app-coperti
+  [tavoloId]="tavoloSelezionato?.id"
+  [isVisible]="isCopertiVisible"
+  (closeCoperti)="chiudiCoperti()">
+</app-coperti>

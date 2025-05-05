@@ -1,0 +1,81 @@
+<div class="dashboard-container">
+  <nav class="sidebar">
+    <ul>
+      <li><a (click)="activeTab = 'cronologia'" [class.active]="activeTab === 'cronologia'">Cronologia ordini</a></li>
+      <li><a (click)="activeTab = 'menu'" [class.active]="activeTab === 'menu'">Menu</a></li>
+      <li><a (click)="activeTab = 'categorie'" [class.active]="activeTab === 'categorie'">Categorie</a></li>
+      <li><a (click)="activeTab = 'tavoli'" [class.active]="activeTab === 'tavoli'">Tavoli</a></li>
+      <li><a (click)="activeTab = 'Utenti'" [class.active]="activeTab === 'Utenti'">Utenti</a></li>
+    </ul>
+  </nav>
+
+  <main class="main-content">
+    <div *ngIf="activeTab === 'cronologia'">
+      <h2>Cronologia ordini</h2>
+      <p>Contenuto della cronologia ordini...</p>
+    </div>
+
+    <div class="mainContainer"  *ngIf="activeTab === 'menu'">
+      <h2>Menu</h2>
+
+      <!-- Visualizza la lista del menu -->
+      <table *ngIf="menuItems.length > 0">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Tipologia</th>
+            <th>Prezzo</th>
+            <th>Azioni</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of menuItems">
+            <td>{{ item.nome }}</td>
+            <td>{{ item.tipologia }}</td>
+            <td>{{ item.prezzo | currency:'EUR' }}</td>
+            <td class="actions">
+              <button (click)="Modifica(item)">Modifica</button>
+              <button (click)="Rimuovi(item.id)">Cancella</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="menuItems.length === 0">Nessun elemento nel menu.</p>
+    </div>
+
+    <div *ngIf="activeTab === 'categorie'">
+      <h2>Categorie</h2>
+      <p>Contenuto delle categorie...</p>
+    </div>
+
+    <div *ngIf="activeTab === 'tavoli'">
+      <h2>Tavoli</h2>
+      <p>Contenuto dei tavoli...</p>
+    </div>
+  </main>
+</div>
+
+<div *ngIf="selectedItem" class="edit-overlay">
+  <div class="edit-form">
+    <h3>Modifica voce di menu</h3>
+    <form (ngSubmit)="salvaModifiche()" #formModifica="ngForm">
+      <label>
+        Nome:
+        <input type="text" [(ngModel)]="selectedItem.nome" name="nome" required />
+      </label>
+      <label>
+        Prezzo:
+        <input type="number" [(ngModel)]="selectedItem.prezzo" name="prezzo" required />
+      </label>
+      <label>
+        Tipologia:
+        <select [(ngModel)]="selectedItem.tipologia_id" name="tipologia_id" required>
+          <option *ngFor="let tipo of tipologie" [value]="tipo.id">{{ tipo.descrittivo }}</option>
+        </select>
+      </label>
+      <button type="submit">Salva</button>
+      <button type="button" (click)="annullaModifica()">Annulla</button>
+    </form>
+  </div>
+</div>
+
