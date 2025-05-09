@@ -18,7 +18,6 @@
       </div>
     </ng-container>
 
-    <!-- 2) Poi tutti gli altri turni (escludendo '6') -->
     <ng-container *ngFor="let turno of getTurni(ordine)">
       <ng-container *ngIf="turno !== '6'">
         <div class="OrdineCard_turnoTitolo">
@@ -43,4 +42,7 @@
       Chiudi Ordine
     </button>
   </div>
+  <a class="ImpostazioniButton" [routerLink]="'/dashboard'">
+  Impostazioni
+</a>
 </div>

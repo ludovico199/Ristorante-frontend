@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 
 interface Piatto {
   nome: string;
@@ -22,7 +23,7 @@ interface Ordine {
 @Component({
   selector: 'app-cucina',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './cucina.component.html',
   styleUrls: ['./cucina.component.css']
 })
