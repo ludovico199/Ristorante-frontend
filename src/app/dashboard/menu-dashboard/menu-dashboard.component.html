@@ -1,0 +1,73 @@
+<!-- Pulsante Aggiungi -->
+<button (click)="mostraFormAggiunta = true" class="aggiungi-button">Aggiungi</button>
+
+<!-- Form aggiunta -->
+<div *ngIf="mostraFormAggiunta" class="aggiunta-form">
+  <form (ngSubmit)="aggiungiMenu()" #formAggiungi="ngForm">
+    <label>
+      Nome:
+      <input type="text" [(ngModel)]="nuovaVoce.nome" name="nome" required />
+    </label>
+    <label>
+      Prezzo:
+      <input type="number" [(ngModel)]="nuovaVoce.prezzo" name="prezzo" required />
+    </label>
+    <label>
+      Tipologia:
+      <select [(ngModel)]="nuovaVoce.tipologia_id" name="tipologia_id" required>
+        <option *ngFor="let tipo of tipologie" [value]="tipo.id">{{ tipo.descrittivo }}</option>
+      </select>
+    </label>
+    <button type="submit">Invia</button>
+    <button type="button" (click)="mostraFormAggiunta = false">Annulla</button>
+  </form>
+</div>
+
+<!-- Tabella menu -->
+<table *ngIf="menuItems.length > 0">
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Tipologia</th>
+      <th>Prezzo</th>
+      <th>Azioni</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of menuItems">
+      <td>{{ item.nome }}</td>
+      <td>{{ item.tipologia }}</td>
+      <td>{{ item.prezzo | currency:'EUR' }}</td>
+      <td class="actions">
+        <button (click)="Modifica(item)">Modifica</button>
+        <button (click)="Rimuovi(item.id)">Cancella</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p *ngIf="menuItems.length === 0">Nessun elemento nel menu.</p>
+
+<!-- Overlay modifica -->
+<div *ngIf="selectedItem" class="edit-overlay">
+  <div class="edit-form">
+    <h3>Modifica voce di menu</h3>
+    <form (ngSubmit)="salvaModifiche()" #formModifica="ngForm">
+      <label>
+        Nome:
+        <input type="text" [(ngModel)]="selectedItem.nome" name="nome" required />
+      </label>
+      <label>
+        Prezzo:
+        <input type="number" [(ngModel)]="selectedItem.prezzo" name="prezzo" required />
+      </label>
+      <label>
+        Tipologia:
+        <select [(ngModel)]="selectedItem.tipologia_id" name="tipologia_id" required>
+          <option *ngFor="let tipo of tipologie" [value]="tipo.id">{{ tipo.descrittivo }}</option>
+        </select>
+      </label>
+      <button type="submit">Salva</button>
+      <button type="button" (click)="annullaModifica()">Annulla</button>
+    </form>
+  </div>
+</div>

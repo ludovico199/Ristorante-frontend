@@ -10,7 +10,7 @@
       class="menu_tipologia"
       *ngFor="let tipologia of tipologie"
       [class.active]="tipologia.attiva"
-      (click)="selezionaCategoria(tipologia)"
+      (click)="selezionaCategoria(tipologia)" 
     >
       {{ tipologia.descrittivo }}
     </div>
@@ -23,7 +23,8 @@
   (click)="apriGestioneQuantita(item)">
 <div class="item_nome">{{ item.nome }}</div>
 <div class="item_prezzo">{{ item.prezzo }}</div>
-<div class="item_tipologia" [ngClass]="GetClasseTipologia(item?.tipologia)"></div>
+<div class="item_tipologia" [ngStyle]="{ 'background-color': item.colore }"></div>
+
 
 <!-- Menu Per Aggiungere Item -->
 

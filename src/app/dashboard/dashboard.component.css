@@ -201,3 +201,63 @@ th {
 .CucinaButton:hover {
   background-color: #1f2f3d;
 }
+
+
+
+.aggiungi-button {
+  margin-bottom: 1rem;
+  padding: 0.6rem 1.2rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.aggiungi-button:hover {
+  background-color: #388e3c;
+}
+
+.aggiunta-form {
+  margin-bottom: 2rem;
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.aggiunta-form label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.aggiunta-form input,
+.aggiunta-form select {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.aggiunta-form button {
+  margin-right: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.aggiunta-form button[type="submit"] {
+  background-color: #03a9f4;
+  color: white;
+}
+
+.aggiunta-form button[type="button"] {
+  background-color: #e74c3c;
+  color: white;
+}

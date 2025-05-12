@@ -68,11 +68,15 @@ export class MenuComponent {
         this.tipologie = response;
         this.http.get<any[]>('http://localhost:8000/api/menu').subscribe({
           next: (response) => {
-            this.menu = response.map(item => ({
-              ...item,
-              quantita: 0,
-              tipologia: this.getNomeTipologia(item.tipologia_id)
-            }));
+            this.menu = response.map(item => {
+              const tipologia = this.tipologie.find(t => t.id === item.tipologia_id);
+              return {
+                ...item,
+                quantita: 0,
+                tipologia: tipologia?.descrittivo || 'Sconosciuto',
+                colore: tipologia?.colore || '#ccc'
+              };
+            });
 
             // Forza la rilevazione dei cambiamenti e il rendering della vista
             this.cdr.detectChanges();
@@ -111,30 +115,6 @@ export class MenuComponent {
     }
   }
 
-  GetClasseTipologia(item_tipologia: any): string {
-    if (!item_tipologia || typeof item_tipologia !== 'string') {
-      return 'bg-default';
-    }
-
-    switch (item_tipologia.toLowerCase()) {
-      case 'antipasti':
-        return 'bg-antipasti';
-      case 'primi':
-        return 'bg-primi';
-      case 'secondi':
-        return 'bg-secondi';
-      case 'dolci':
-        return 'bg-dolci';
-      case 'bevande':
-        return 'bg-bevande';
-      case 'vini':
-        return 'bg-vini';
-      case 'caffè':
-        return 'bg-caffe';
-      default:
-        return 'bg-default';
-    }
-  }
 
   // zona invio ordine
   apriGestioneQuantita(item: any) {

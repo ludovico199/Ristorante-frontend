@@ -35,7 +35,9 @@ export class CucinaComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.caricaOrdini();
-    this.intervallo = setInterval(() => this.caricaOrdini(), 5000);
+    
+    this.intervallo = setInterval(() => this.caricaOrdini(), 500000);
+    
   }
 
   ngOnDestroy(): void {
