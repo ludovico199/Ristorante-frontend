@@ -17,4 +17,16 @@ body.block-scroll {
   overflow: hidden;
 }
 
+/* Disabilita il “tap highlight” blu su tutti gli elementi */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none; /* opzionale: disabilita menu contestuale */
+}
+
+/* Rimuove eventuali outline su focus (se serve) */
+:focus {
+  outline: none;
+}
+
+
 

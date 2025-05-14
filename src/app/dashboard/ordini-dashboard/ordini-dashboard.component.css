@@ -1,0 +1,71 @@
+/* ordini-dashboard.component.css */
+/* Copio lo stile della tabella dei tavoli */
+table {
+    width: 60%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  th, td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+  
+  th {
+    background-color: #f0f0f0;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .actions button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background-color: #e74c3c;
+    color: white;
+    transition: background-color 0.2s;
+  }
+  
+  .actions button:hover {
+    opacity: 0.9;
+  }
+  
+  /* Pulsante Ricarica */
+  .aggiungi-button {
+    margin-bottom: 1rem;
+    padding: 0.6rem 1.2rem;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+  
+  .aggiungi-button:hover {
+    background-color: #388e3c;
+  }
+  
+  /* Riga espansa */
+  tr.expanded {
+    background-color: #fafafa;
+  }
+  
+  .items-list {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .items-list li {
+    padding: 8px 0;
+    border-bottom: 1px dashed #ccc;
+  }
+  

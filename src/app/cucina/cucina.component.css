@@ -1,13 +1,13 @@
 /* Contenitore orizzontale per tutte le card */
 .OrdiniContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, 1fr); /* 4 colonne sempre */
   gap: 2rem;
   padding: 2rem;
   background-color: #e7e7e7;
   box-sizing: border-box;
-  /* ✅ non aggiungere align-items: stretch */
 }
+
 
 .OrdineCard {
   background-color: #fff;
@@ -19,8 +19,7 @@
   flex-direction: column;
   gap: 1rem;
   box-sizing: border-box;
-  width: 100%;
-  height: fit-content;
+  width: 100%;          /* occupa tutta la colonna */
   min-height: 230px;
 }
 

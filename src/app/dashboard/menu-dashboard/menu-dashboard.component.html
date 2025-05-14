@@ -1,5 +1,19 @@
-<!-- Pulsante Aggiungi -->
-<button (click)="mostraFormAggiunta = true" class="aggiungi-button">Aggiungi</button>
+<!-- Controlli sopra la tabella: Aggiungi + Ricerca -->
+<div class="toolbar">
+  <button (click)="mostraFormAggiunta = true" class="aggiungi-button">Aggiungi</button>
+  <button (click)="cercaMenu()" class="search-button">Cerca</button>
+  <button *ngIf="ricercaAttiva" (click)="resetRicerca()" class="reset-button">
+    Ripristina
+  </button>
+  <!-- Campo di ricerca -->
+ <input
+  type="text"
+  [(ngModel)]="searchTerm"
+  (keyup.enter)="cercaMenu()"
+  placeholder="Cerca per nome..."
+  class="search-input"
+/>
+</div>
 
 <!-- Form aggiunta -->
 <div *ngIf="mostraFormAggiunta" class="aggiunta-form">
@@ -13,9 +27,15 @@
       <input type="number" [(ngModel)]="nuovaVoce.prezzo" name="prezzo" required />
     </label>
     <label>
+      Quantità:
+      <input type="number" [(ngModel)]="nuovaVoce.quantita" name="quantita" required min="0" />
+    </label>
+    <label>
       Tipologia:
       <select [(ngModel)]="nuovaVoce.tipologia_id" name="tipologia_id" required>
-        <option *ngFor="let tipo of tipologie" [value]="tipo.id">{{ tipo.descrittivo }}</option>
+        <option *ngFor="let tipo of tipologie" [value]="tipo.id">
+          {{ tipo.descrittivo }}
+        </option>
       </select>
     </label>
     <button type="submit">Invia</button>
@@ -24,20 +44,28 @@
 </div>
 
 <!-- Tabella menu -->
-<table *ngIf="menuItems.length > 0">
+<table *ngIf="(ricercaAttiva ? filteredItems : menuItems).length > 0">
   <thead>
     <tr>
       <th>Nome</th>
       <th>Tipologia</th>
       <th>Prezzo</th>
-      <th>Azioni</th>
+      <th>Quantità</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let item of menuItems">
+    <tr
+      *ngFor="let item of (ricercaAttiva ? filteredItems : menuItems)"
+      [class.highlight]="
+        ricercaAttiva &&
+        item.nome.toLowerCase().includes(searchTerm.toLowerCase())
+      "
+    >
       <td>{{ item.nome }}</td>
       <td>{{ item.tipologia }}</td>
-      <td>{{ item.prezzo | currency:'EUR' }}</td>
+      <td>{{ item.prezzo | currency: 'EUR' }}</td>
+      <td>{{ item.quantita }}</td>
       <td class="actions">
         <button (click)="Modifica(item)">Modifica</button>
         <button (click)="Rimuovi(item.id)">Cancella</button>
@@ -45,11 +73,14 @@
     </tr>
   </tbody>
 </table>
-<p *ngIf="menuItems.length === 0">Nessun elemento nel menu.</p>
+<p *ngIf="(ricercaAttiva ? filteredItems : menuItems).length === 0">
+  Nessun elemento nel menu.
+</p>
 
 <!-- Overlay modifica -->
-<div *ngIf="selectedItem" class="edit-overlay">
-  <div class="edit-form">
+<div *ngIf="selectedItem" class="edit-overlay" (click)="annullaModifica()">
+  <div class="edit-form"
+       (click)="$event.stopPropagation()">
     <h3>Modifica voce di menu</h3>
     <form (ngSubmit)="salvaModifiche()" #formModifica="ngForm">
       <label>
@@ -58,12 +89,33 @@
       </label>
       <label>
         Prezzo:
-        <input type="number" [(ngModel)]="selectedItem.prezzo" name="prezzo" required />
+        <input
+          type="number"
+          [(ngModel)]="selectedItem.prezzo"
+          name="prezzo"
+          required
+        />
+      </label>
+      <label>
+        Quantità:
+        <input
+          type="number"
+          [(ngModel)]="selectedItem.quantita"
+          name="quantita"
+          required
+          min="0"
+        />
       </label>
       <label>
         Tipologia:
-        <select [(ngModel)]="selectedItem.tipologia_id" name="tipologia_id" required>
-          <option *ngFor="let tipo of tipologie" [value]="tipo.id">{{ tipo.descrittivo }}</option>
+        <select
+          [(ngModel)]="selectedItem.tipologia_id"
+          name="tipologia_id"
+          required
+        >
+          <option *ngFor="let tipo of tipologie" [value]="tipo.id">
+            {{ tipo.descrittivo }}
+          </option>
         </select>
       </label>
       <button type="submit">Salva</button>

@@ -9,9 +9,10 @@ export const routes: Routes = [
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
     children: [
-      { path: 'menu', loadComponent: () => import('./dashboard/menu-dashboard/menu-dashboard.component').then(m => m.MenuDashboardComponent) },
-      { path: 'categorie', loadComponent: () => import('./dashboard/categorie-dashboard/categorie-dashboard.component').then(m => m.CategorieDashboardComponent) },
-      { path: 'tavoli', loadComponent: () => import('./dashboard/tavoli-dashboard/tavoli-dashboard.component').then(m => m.TavoliDashboardComponent) },
+      { path: 'menu',       loadComponent: () => import('./dashboard/menu-dashboard/menu-dashboard.component').then(m => m.MenuDashboardComponent) },
+      { path: 'categorie',  loadComponent: () => import('./dashboard/categorie-dashboard/categorie-dashboard.component').then(m => m.CategorieDashboardComponent) },
+      { path: 'tavoli',     loadComponent: () => import('./dashboard/tavoli-dashboard/tavoli-dashboard.component').then(m => m.TavoliDashboardComponent) },
+      { path: 'ordini',     loadComponent: () => import('./dashboard/ordini-dashboard/ordini-dashboard.component').then(m => m.OrdiniDashboardComponent) },
       { path: '', redirectTo: 'menu', pathMatch: 'full' }
     ]
   }

@@ -142,13 +142,30 @@ export class MenuComponent {
   decrementa(item: any) {
     if (item.quantita > 0) {
       item.quantita--;
-
+  
       if (item.quantita === 0) {
-        // Rimuove l'elemento da OrdineMenu se esiste con lo stesso menu_id e comanda_id
-        this.OrdineMenu = this.OrdineMenu.filter(i => !(i.menu_id === item.id && i.comanda_id === this.TurnoSelezionato));
+        // Rimuove sia dalla lista visiva che da OrdineMenu (solo se non è serverData)
+        if (!item.isServerData) {
+          this.OrdineMenu = this.OrdineMenu.filter(i =>
+            !(i.menu_id === item.menu_id && i.comanda_id === item.comanda_id)
+          );
+        }
+  
+        this.listaOrdine = this.listaOrdine.filter(i =>
+          !(i.menu_id === item.menu_id && i.comanda_id === item.comanda_id)
+        );
+  
+        // Aggiorna la listaOrdineGruppata
+        this.listaOrdineGruppata = this.listaOrdine.reduce((acc, item) => {
+          const turno = item.turno;
+          if (!acc[turno]) acc[turno] = [];
+          acc[turno].push(item);
+          return acc;
+        }, {});
       }
     }
   }
+  
 
 
   CreaListaOrdine(item: any) {

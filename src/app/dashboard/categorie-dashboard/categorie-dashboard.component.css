@@ -1,6 +1,6 @@
 /* Tabella */
 table {
-    width: 100%;
+    width: 60%;
     border-collapse: collapse;
     margin-top: 20px;
     background-color: white;
@@ -72,6 +72,7 @@ table {
   }
   
   .aggiunta-form {
+    width: 30%;
     margin-bottom: 2rem;
     background-color: #ffffff;
     padding: 1rem;
@@ -88,7 +89,7 @@ table {
   
   .aggiunta-form input,
   .edit-form input {
-    width: 100%;
+    width: 82%;
     padding: 0.5rem;
     margin-top: 0.25rem;
     margin-bottom: 1rem;
