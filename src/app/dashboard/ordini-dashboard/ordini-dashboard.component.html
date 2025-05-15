@@ -12,7 +12,7 @@
     <ng-container *ngFor="let o of ordini">
       <tr (click)="toggleDetails(o)" [class.expanded]="expandedOrderId === o.id">
         <td>{{ formatDateTime(o.created_at) }}</td>
-        <td>{{ o.totale_prezzo | number:'1.2-2':'it-IT' }}</td>
+        <td>{{ o.totale_prezzo | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</td>
         <td class="actions">
           <button (click)="rimuoviOrdine(o.id, $event)">Cancella</button>
         </td>
