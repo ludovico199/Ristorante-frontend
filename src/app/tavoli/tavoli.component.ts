@@ -52,16 +52,11 @@ export class TavoliComponent implements OnInit, OnDestroy {
     this.applicationRef.isStable.pipe(first((isStable) => isStable)).subscribe(() => {
       this.iniziaControlloTavoli();
     });
-    this.ordineService.tavoloId$.subscribe(tavoloId => {
-      console.log("📌 Tavolo selezionato:", tavoloId);  // Debug: monitoriamo il tavolo selezionato
-    });
+    this.ordineService.tavoloId$.subscribe(tavoloId => {});
 
-    this.ordineService.numeroCoperti$.subscribe(coperti => {
-      console.log("📌 Numero coperti selezionato:", coperti);  // Debug: monitoriamo il numero di coperti
-    });
+    this.ordineService.numeroCoperti$.subscribe(coperti => {});
     this.ordineService.tavoloStatus$.subscribe(status => {
       this.tavoloStatus = status;
-      console.log("📌 Stato del tavolo aggiornato:", status);  // Debug: monitoriamo lo stato del tavolo
     });
   }
 
@@ -77,7 +72,7 @@ export class TavoliComponent implements OnInit, OnDestroy {
         if (!this.isMenuVisible && !this.isCopertiVisible && !this.TavoloAperto) {
           this.caricaTavoli();
         }
-      }, 5000);
+      },50000000);
     }
   }
 
@@ -91,20 +86,31 @@ export class TavoliComponent implements OnInit, OnDestroy {
   private caricaTavoli(): void {
     this.http.get<any[]>('http://localhost:8000/api/tavoli').subscribe({
       next: (response) => {
-        this.tavoli = response;
-        console.log('Dati tavoli aggiornati:', this.tavoli);
+        this.tavoli = response.map(tavolo => {
+          // se non esiste ordini, inizializza array vuoto
+          const ordini = tavolo.ordini ?? [];
+          const ordiniAttivi = ordini.filter((o: any) => o.stato_ordine_id !== 2);
+          const stato = ordiniAttivi.length > 0 ? 'IN CORSO' : 'TERMINATO';
+          return {
+            ...tavolo,
+            stato
+          };
+        });
+  
         if (this.tavoloSelezionato) {
-          this.tavoloSelezionato = this.tavoli.find(tavolo => tavolo.id === this.tavoloSelezionato.id);
+          this.tavoloSelezionato = 
+            this.tavoli.find(t => t.id === this.tavoloSelezionato.id) || null;
         }
+  
         this.cdr.detectChanges();
-        this.controllaStatoTavolo(); // Aggiungi il controllo dello stato del tavolo
       },
       error: (err) => {
         console.error('Errore nel caricamento dei tavoli:', err);
-        alert('Impossibile aggiornare i tavoli, riprova più tardi');
       }
     });
   }
+  
+  
   toggleMenu(tavolo: any, event: MouseEvent): void {
     event.stopPropagation();
     const isCurrentlyOpen = tavolo.mostraMenu;

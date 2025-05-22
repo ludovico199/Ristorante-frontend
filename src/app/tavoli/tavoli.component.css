@@ -77,17 +77,16 @@
 .costo_api{
   align-self: flex-end;
 }
-.tavolo_costo {
-  background-size: cover;
-  height: 16px;
-  width: 13px;
-}
 
 .tavolo_stato {
-  display: none;
+  display: block;           /* ora si vede */
   font-size: 14px;
   color: #333;
+  width: 100%;
+  text-align: center;
+  margin-top: 4px;
 }
+
 
 .hidden {
   display: none;
