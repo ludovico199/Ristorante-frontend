@@ -195,12 +195,6 @@ export class MenuComponent {
 
 
   inviaOrdine() {
-    console.log("🔄 Stato prima dell'invio ordine:", {
-      OrdineMenu: this.OrdineMenu,
-      tavoloId: this.tavoloId,
-      numeroCoperti: this.numeroCoperti
-    });
-
     if (this.OrdineMenu.length > 0 && this.tavoloId && this.numeroCoperti !== null) {
       const statoOrdineId = 1;
       const datiOrdine = {
@@ -218,7 +212,6 @@ export class MenuComponent {
 
       this.http.post('http://localhost:8000/api/crea-ordine', datiOrdine).subscribe({
         next: (response) => {
-          console.log('Ordine inviato con successo:', response);
           this.OrdineMenu = [];
           this.aggiornaListaOrdine();
         },
@@ -261,7 +254,6 @@ export class MenuComponent {
           };
         })
       ];
-      console.log("👀 ListaOrdine nella CheckMenu:", this.listaOrdine);
       if (Object.keys(this.listaOrdineGruppata).length === 0) {
         
         this.ordineService.aggiornaStatoTavolo('TERMINATO');

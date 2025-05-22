@@ -32,7 +32,6 @@ export class OrdiniDashboardComponent implements OnInit {
   loadOrdini(): void {
     this.svc.getCronologiaOrdini().subscribe({
       next: data => {
-        console.log('CRONOLOGIA ORDINI RICEVUTA DAL SERVER:', data);
         this.ordini = data;
       },
       error: err => console.error('Errore caricamento cronologia ordini:', err)

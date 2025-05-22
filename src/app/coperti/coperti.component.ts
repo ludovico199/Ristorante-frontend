@@ -28,11 +28,6 @@ export class CopertiComponent {
 
   salvaCoperti() {
     if (this.tavoloId && this.numeroCoperti > 0) {
-      // Aggiungi il log per verificare l'ID e l'URL
-      console.log("ID Tavolo:", this.tavoloId);
-      console.log(`Invio richiesta PUT all'URL: http://localhost:8000/api/coperti/${this.tavoloId}`);
-
-      // Dati da inviare nella richiesta
       const data = {
         coperti: this.numeroCoperti
       };
@@ -40,7 +35,6 @@ export class CopertiComponent {
       // Invio la richiesta PUT
       this.http.put(`http://localhost:8000/api/coperti/${this.tavoloId}`, data).subscribe(
         response => {
-          console.log('Coperti aggiornati con successo:', response);
           this.chiudiCoperti(); // Chiudi la finestra
         },
         error => {

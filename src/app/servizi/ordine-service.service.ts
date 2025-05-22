@@ -20,11 +20,9 @@ export class OrdineService {
   setTavoloEcoperti(tavoloId: number, numeroCoperti: number) {
     this.tavoloIdSubject.next(tavoloId);
     this.numeroCopertiSubject.next(numeroCoperti);
-    console.log("✅ Tavolo e coperti aggiornati nel service:", { tavoloId, numeroCoperti });
   }
 
   aggiornaStatoTavolo(status: string) {
     this.tavoloStatusSubject.next(status);
-    console.log("✅ Stato del tavolo aggiornato a:", status);
   }
 }

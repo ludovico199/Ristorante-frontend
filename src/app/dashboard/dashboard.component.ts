@@ -37,7 +37,6 @@ export class DashboardComponent implements OnInit {
   getMenu(): void {
     this.menuDashboardService.getMenu().subscribe({
       next: (data) => {
-        console.log('Dati ricevuti dal server:', data);
         this.menuItems = data;
         this.menuItems.forEach(item => {
           const tipologia = this.tipologie.find(t => t.id === item.tipologia_id);
@@ -73,7 +72,6 @@ export class DashboardComponent implements OnInit {
 
 
   Modifica(item: any): void {
-    console.log('Modifica chiamata per:', item);
     this.selectedItem = {
       id: item.id,
       nome: item.nome,
@@ -99,7 +97,6 @@ export class DashboardComponent implements OnInit {
       prezzo: this.selectedItem.prezzo,
       tipologia_id: this.selectedItem.tipologia_id
     };
-    console.log('Dati inviati al server:', updatedMenu); // 👈 log di debug
     this.menuDashboardService.updateMenuItem(this.selectedItem.id, updatedMenu).subscribe(() => {
       this.selectedItem = null;
       this.getMenu();

@@ -126,15 +126,12 @@ export class TavoliComponent implements OnInit, OnDestroy {
     // Imposta coperti a 0 via API
     this.http.put(`http://localhost:8000/api/coperti/${tavolo.id}`, { coperti: 0 }).subscribe({
       next: (response) => {
-        console.log('Coperti azzerati per tavolo:', tavolo.id);
         this.caricaTavoli(); // aggiorna la lista dei tavoli
       },
       error: (err) => {
         console.error('Errore nell\'azzeramento dei coperti:', err);
       }
     });
-
-    console.log('Tavolo chiuso:', tavolo);
   }
 
 
@@ -146,7 +143,6 @@ export class TavoliComponent implements OnInit, OnDestroy {
       // Modifica i coperti direttamente attraverso l'API
       this.http.put(`http://localhost:8000/api/coperti/${tavoloId}`, { coperti }).subscribe({
         next: (response) => {
-          console.log('Coperti aggiornati con successo:', response);
           this.caricaTavoli();  // Ricarica i tavoli per riflettere i cambiamenti
         },
         error: (err) => {
@@ -164,8 +160,6 @@ export class TavoliComponent implements OnInit, OnDestroy {
     if (tavolo) {
       this.ordineService.setTavoloEcoperti(tavolo.id, tavolo.numero_coperti);
     }
-
-    console.log(`📌 Tavolo ${id} selezionato con ${tavolo?.numero_coperti} coperti`);
   }
 
   getClasseTavolo(tavolo: any): string {

@@ -54,9 +54,6 @@ export class CucinaComponent implements OnInit, OnDestroy {
             ...o,
             groupedMenu: this.groupByTurno(o.menu)
           }));
-  
-        // 👇 Log degli ordini attivi
-        console.log("📦 Ordini attivi:", this.ordini);
       },
       error: (error) => console.error('Errore nel caricamento degli ordini:', error)
     });
