@@ -20,7 +20,7 @@
           <div>{{ tavolo.numero_coperti }}</div>
         </div>
         <div class="tavolo_dati">
-          <div class="tavolo_stato">
+          <div class="tavolo_stato" *ngIf="tavolo.numero_coperti > 0">
             {{ tavolo.stato }}
           </div>
         </div>

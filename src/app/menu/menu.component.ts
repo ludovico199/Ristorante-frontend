@@ -142,7 +142,7 @@ export class MenuComponent {
   decrementa(item: any) {
     if (item.quantita > 0) {
       item.quantita--;
-  
+
       if (item.quantita === 0) {
         // Rimuove sia dalla lista visiva che da OrdineMenu (solo se non è serverData)
         if (!item.isServerData) {
@@ -150,11 +150,11 @@ export class MenuComponent {
             !(i.menu_id === item.menu_id && i.comanda_id === item.comanda_id)
           );
         }
-  
+
         this.listaOrdine = this.listaOrdine.filter(i =>
           !(i.menu_id === item.menu_id && i.comanda_id === item.comanda_id)
         );
-  
+
         // Aggiorna la listaOrdineGruppata
         this.listaOrdineGruppata = this.listaOrdine.reduce((acc, item) => {
           const turno = item.turno;
@@ -165,7 +165,7 @@ export class MenuComponent {
       }
     }
   }
-  
+
 
 
   CreaListaOrdine(item: any) {
@@ -209,10 +209,10 @@ export class MenuComponent {
           comanda_id: item.comanda_id ?? 6,
         })),
     };
-
       this.http.post('http://localhost:8000/api/crea-ordine', datiOrdine).subscribe({
         next: (response) => {
           this.OrdineMenu = [];
+          this.isCheckMenuVisible = false; // 👈 Chiudi il CheckMenu
           this.aggiornaListaOrdine();
         },
         error: (err) => {
@@ -255,7 +255,7 @@ export class MenuComponent {
         })
       ];
       if (Object.keys(this.listaOrdineGruppata).length === 0) {
-        
+
         this.ordineService.aggiornaStatoTavolo('TERMINATO');
       } else {
         this.ordineService.aggiornaStatoTavolo('IN CORSO');
