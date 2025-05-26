@@ -7,7 +7,6 @@ import { FilterByCategoryPipe } from '../filter-by-category.pipe';
 import { OrdineService } from '../servizi/ordine-service.service';
 import { ChangeDetectorRef } from '@angular/core';
 
-
 @Component({
   selector: 'app-menu',
   standalone: true,
@@ -15,11 +14,10 @@ import { ChangeDetectorRef } from '@angular/core';
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css']
 })
-
-
 export class MenuComponent {
   @Input() isVisible: boolean = false;
   @Output() closeMenu = new EventEmitter<void>();
+
   tipologiaSelezionata: string | null = null;
   menu: any[] = [];
   tipologie: any[] = [];
@@ -27,26 +25,23 @@ export class MenuComponent {
   itemSelezionato: any | null = null;
   TurnoSelezionato: number | null = null;
   OrdineMenu: any[] = [];
-  constructor(private http: HttpClient, private ordineService: OrdineService, private cdr: ChangeDetectorRef) {}
+
   tavoloId: number | null = null;
-  statoOrdine = 'in corso'; // Stato dell'ordine
+  statoOrdine = 'in corso';
   numeroCoperti: number | null = null;
   listaOrdine: any[] = [];
   isCheckMenuVisible: boolean = false;
   turni: (number | string)[] = [...[1, 2, 3, 4, 5, 6], 'NO'];
   ordineConfermato: any[] = [];
   ordiniEsistenti: any[] = [];
+
   listaOrdineGruppata: { [key: string]: any[] } = {
-    1: [],
-    2: [],
-    3: [],
-    4: [],
-    5: [],
-    NO: []
+    1: [], 2: [], 3: [], 4: [], 5: [], 6: [], NO: []
   };
+
   ordiniCombinati = [...this.ordiniEsistenti, ...this.ordineConfermato];
 
-
+  constructor(private http: HttpClient, private ordineService: OrdineService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.caricaMenu();
@@ -60,9 +55,7 @@ export class MenuComponent {
     });
   }
 
-
   private caricaMenu(): void {
-    // Prima carichiamo le tipologie
     this.http.get<any[]>('http://localhost:8000/api/tipologie').subscribe({
       next: (response) => {
         this.tipologie = response;
@@ -77,24 +70,11 @@ export class MenuComponent {
                 colore: tipologia?.colore || '#ccc'
               };
             });
-
-            // Forza la rilevazione dei cambiamenti e il rendering della vista
             this.cdr.detectChanges();
-          },
-          error: (err) => {
-            console.error('Errore durante il recupero dei dati menu:', err);
           }
         });
-      },
-      error: (err) => {
-        console.error('Errore durante il recupero delle tipologie:', err);
       }
     });
-  }
-
-  getNomeTipologia(tipologia_id: number): string {
-    const tipologia = this.tipologie.find(t => t.id === tipologia_id);
-    return tipologia ? tipologia.descrittivo : 'Sconosciuto';
   }
 
   chiudiMenu() {
@@ -115,20 +95,15 @@ export class MenuComponent {
     }
   }
 
-
-  // zona invio ordine
   apriGestioneQuantita(item: any) {
     this.itemSelezionato = item;
   }
 
   GestioneTurni(turno: number | string) {
-    if (this.TurnoSelezionato === turno || (this.TurnoSelezionato === 6 && turno === 'NO')) {
-      this.TurnoSelezionato = null;
-    } else {
-      this.TurnoSelezionato = turno === 'NO' ? 6 : turno as number;
-    }
+    this.TurnoSelezionato = (this.TurnoSelezionato === turno || (this.TurnoSelezionato === 6 && turno === 'NO'))
+      ? null
+      : (turno === 'NO' ? 6 : turno as number);
   }
-
 
   chiudiGestioneQuantita(event: Event) {
     this.itemSelezionato = null;
@@ -142,22 +117,16 @@ export class MenuComponent {
   decrementa(item: any) {
     if (item.quantita > 0) {
       item.quantita--;
-  
+
       if (item.quantita === 0) {
-        // Rimuove sia dalla lista visiva che da OrdineMenu (solo se non è serverData)
         if (!item.isServerData) {
-          this.OrdineMenu = this.OrdineMenu.filter(i =>
-            !(i.menu_id === item.menu_id && i.comanda_id === item.comanda_id)
-          );
+          this.OrdineMenu = this.OrdineMenu.filter(i => !(i.menu_id === item.menu_id && i.comanda_id === item.comanda_id));
         }
-  
-        this.listaOrdine = this.listaOrdine.filter(i =>
-          !(i.menu_id === item.menu_id && i.comanda_id === item.comanda_id)
-        );
-  
-        // Aggiorna la listaOrdineGruppata
+
+        this.listaOrdine = this.listaOrdine.filter(i => !(i.menu_id === item.menu_id && i.comanda_id === item.comanda_id));
+
         this.listaOrdineGruppata = this.listaOrdine.reduce((acc, item) => {
-          const turno = item.turno;
+          const turno = item.turno?.toString();
           if (!acc[turno]) acc[turno] = [];
           acc[turno].push(item);
           return acc;
@@ -165,68 +134,55 @@ export class MenuComponent {
       }
     }
   }
-  
-
 
   CreaListaOrdine(item: any) {
     if (item.quantita > 0) {
-      // Controlla se la combinazione menu_id + comanda_id esiste già nell'OrdineMenu
+      const turnoFinale = this.TurnoSelezionato ?? 6;
       const esistente = this.OrdineMenu.some(existingItem =>
-        existingItem.menu_id === item.id && existingItem.comanda_id === this.TurnoSelezionato
+        existingItem.menu_id === item.id && existingItem.comanda_id === turnoFinale
       );
 
       if (!esistente) {
-        const ListaOrdine = {
+        this.OrdineMenu.push({
           menu_id: item.id,
           quantita: item.quantita,
           note: item.note || '',
-          comanda_id: this.TurnoSelezionato,
-        };
-        this.OrdineMenu.push(ListaOrdine);
+          comanda_id: turnoFinale,
+        });
         item.quantita = 0;
         item.note = '';
         this.TurnoSelezionato = null;
         this.itemSelezionato = null;
-      } else {
-        console.log("Ordine già esistente per questa combinazione menu_id e comanda_id.");
       }
     }
   }
 
-
   inviaOrdine() {
     if (this.OrdineMenu.length > 0 && this.tavoloId && this.numeroCoperti !== null) {
-      const statoOrdineId = 1;
+      const turnoFinale = this.TurnoSelezionato ?? 6;
+
       const datiOrdine = {
         numero_coperti: this.numeroCoperti,
-        stato_ordine: statoOrdineId,
+        stato_ordine: 1,
         tavolo_id: this.tavoloId,
-        comanda_id: this.TurnoSelezionato,
+        comanda_id: turnoFinale,
         menu_items: this.OrdineMenu.map(item => ({
           menu_id: item.menu_id,
           quantita: item.quantita,
           note: item.note || null,
           comanda_id: item.comanda_id ?? 6,
         })),
-    };
+      };
 
       this.http.post('http://localhost:8000/api/crea-ordine', datiOrdine).subscribe({
-        next: (response) => {
+        next: () => {
           this.OrdineMenu = [];
           this.aggiornaListaOrdine();
-          this.isCheckMenuVisible = false; // 👈 chiude CheckMenu
-        },
-        error: (err) => {
-          console.error('Errore nell’invio dell’ordine:', err);
+          this.isCheckMenuVisible = false;
         }
       });
-    } else {
-      console.log('Errore: tavolo o numero coperti non disponibili o nessun ordine.');
     }
   }
-
-
-      // CHECK MENU
 
   CheckMenu() {
     this.recuperaOrdiniEsistenti();
@@ -238,9 +194,9 @@ export class MenuComponent {
           const menuItem = this.menu.find(m => m.id === item.menu_id);
           return {
             ...item,
-            nome: menuItem ? menuItem.nome : 'Voce sconosciuta',
-            prezzo: menuItem ? menuItem.prezzo : 0,
-            turno: item.comanda_id ?? 'NO',
+            nome: menuItem?.nome || 'Voce sconosciuta',
+            prezzo: menuItem?.prezzo || 0,
+            turno: item.comanda_id === 6 ? '6' : item.comanda_id,
             isServerData: false
           };
         }),
@@ -248,31 +204,25 @@ export class MenuComponent {
           const menuItem = this.menu.find(m => m.id === item.menu_id);
           return {
             ...item,
-            nome: menuItem ? menuItem.nome : 'Voce sconosciuta',
-            prezzo: menuItem ? menuItem.prezzo : 0,
+            nome: menuItem?.nome || 'Voce sconosciuta',
+            prezzo: menuItem?.prezzo || 0,
             turno: item.comanda_id ?? 'NO',
             isServerData: true
           };
         })
       ];
-      if (Object.keys(this.listaOrdineGruppata).length === 0) {
-        
-        this.ordineService.aggiornaStatoTavolo('TERMINATO');
-      } else {
-        this.ordineService.aggiornaStatoTavolo('IN CORSO');
-      }
+
       this.listaOrdineGruppata = this.listaOrdine.reduce((acc, item) => {
-        const turno = item.turno;
-        if (!acc[turno]) {
-          acc[turno] = [];
-        }
+        const turno = item.turno?.toString();
+        if (!acc[turno]) acc[turno] = [];
         acc[turno].push(item);
         return acc;
-      }, {});
+      }, {
+        '1': [], '2': [], '3': [], '4': [], '5': [], '6': [], 'NO': []
+      });
 
       this.isCheckMenuVisible = true;
     }
-
   }
 
   aggiornaListaOrdine() {
@@ -282,9 +232,9 @@ export class MenuComponent {
         const menuItem = this.menu.find(m => m.id === item.menu_id);
         return {
           ...item,
-          nome: menuItem ? menuItem.nome : 'Voce sconosciuta',
-          prezzo: menuItem ? menuItem.prezzo : 0,
-          turno: item.comanda_id ?? 'NO',
+          nome: menuItem?.nome || 'Voce sconosciuta',
+          prezzo: menuItem?.prezzo || 0,
+          turno: item.comanda_id === 6 ? '6' : item.comanda_id,
           isServerData: false
         };
       }),
@@ -292,8 +242,8 @@ export class MenuComponent {
         const menuItem = this.menu.find(m => m.id === item.menu_id);
         return {
           ...item,
-          nome: menuItem ? menuItem.nome : 'Voce sconosciuta',
-          prezzo: menuItem ? menuItem.prezzo : 0,
+          nome: menuItem?.nome || 'Voce sconosciuta',
+          prezzo: menuItem?.prezzo || 0,
           turno: item.comanda_id ?? 'NO',
           isServerData: true
         };
@@ -301,24 +251,20 @@ export class MenuComponent {
     ];
 
     this.listaOrdineGruppata = this.listaOrdine.reduce((acc, item) => {
-      const turno = item.turno;
-      if (!acc[turno]) {
-        acc[turno] = [];
-      }
+      const turno = item.turno?.toString();
+      if (!acc[turno]) acc[turno] = [];
       acc[turno].push(item);
       return acc;
     }, {});
   }
 
-
   rimuoviItem(item: any) {
     this.OrdineMenu = this.OrdineMenu.filter(i => i.menu_id !== item.menu_id || i.comanda_id !== item.comanda_id);
     this.listaOrdine = this.listaOrdine.filter(i => i.menu_id !== item.menu_id || i.comanda_id !== item.comanda_id);
+
     this.listaOrdineGruppata = this.listaOrdine.reduce((acc, item) => {
-      const turno = item.turno;
-      if (!acc[turno]) {
-        acc[turno] = [];
-      }
+      const turno = item.turno?.toString();
+      if (!acc[turno]) acc[turno] = [];
       acc[turno].push(item);
       return acc;
     }, {});
@@ -330,12 +276,8 @@ export class MenuComponent {
         next: (response) => {
           this.ordiniEsistenti = response;
           this.ordiniCombinati = [...this.ordiniEsistenti, ...this.ordineConfermato];
-        },
-        error: (err) => {
-          console.error('Errore nel recupero degli ordini esistenti:', err);
         }
       });
     }
   }
 }
-

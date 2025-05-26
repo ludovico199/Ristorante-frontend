@@ -97,13 +97,18 @@ export class TavoliComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.tavoli = response.map(tavolo => {
           const righeOrdine = tavolo.righe_ordine ?? [];
-  
-          const ordini = righeOrdine.map((item: any) => ({
-            nome: item.menu?.nome || 'Voce sconosciuta',
-            prezzo: item.menu?.prezzo || 0,
-            quantita: item.quantita,
-            comanda_id: item.comanda_id ?? 'NO'
-          }));
+          const ordini = righeOrdine.map((item: any) => {
+            const ordine = {
+              nome: item.menu?.nome || 'Voce sconosciuta',
+              prezzo: item.menu?.prezzo || 0,
+              quantita: item.quantita,
+              comanda_id: item.comanda_id ?? 'NO',
+              note: item.note || ''
+            };
+            console.log('📦 Riga ordine caricata:', ordine);
+            return ordine;
+          });
+          
   
           const stato = ordini.length > 0 ? 'IN CORSO' : 'TERMINATO';
   
@@ -182,7 +187,6 @@ export class TavoliComponent implements OnInit, OnDestroy {
     this.TavoloAperto = false;
     this.isMenuVisible = false;
     this.isCopertiVisible = false;
-    console.log('Menu chiuso');
     this.caricaTavoli();
     this.riprendiAggiornamentoTavoli();
   }
@@ -191,7 +195,6 @@ export class TavoliComponent implements OnInit, OnDestroy {
     this.TavoloAperto = false;
     this.isMenuVisible = false;
     this.isCopertiVisible = false;
-    console.log('Coperti chiusi');
     this.caricaTavoli();
     this.riprendiAggiornamentoTavoli();
   }
@@ -230,8 +233,6 @@ export class TavoliComponent implements OnInit, OnDestroy {
   /*** Funzioni Overlay Ordine ***/
   apriOrdine(tavolo: any, event: MouseEvent): void {
     event.stopPropagation();
-    console.log('DEBUG apriOrdine: tavolo:', tavolo);
-    console.log('DEBUG apriOrdine: tavolo.ordini:', tavolo.ordini);
     this.ordineSelezionato = tavolo;
     this.ordineAperto = true;
     this.fermaAggiornamentoTavoli();

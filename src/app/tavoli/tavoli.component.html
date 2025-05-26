@@ -25,11 +25,9 @@
           </div>
         </ng-container>
     </div>
-    <ng-container *ngIf="tavolo.numero_coperti > 0">
-      <button class="btn-ordine" (click)="apriOrdine(tavolo, $event)">
-        Ordine
-      </button>
-    </ng-container>
+    <button class="btn-ordine" (click)="apriOrdine(tavolo, $event)">
+      €{{ getTotale(tavolo.ordini) | number:'1.2-2' }}
+    </button>
   </div>
 </div>
 
@@ -43,9 +41,22 @@
     <h3>Ordine Tavolo T{{ ordineSelezionato?.numero_tavolo }}</h3>
     <ul>
       <li *ngFor="let item of ordineSelezionato?.ordini">
-        {{ item.quantita }}x {{ item.nome }} — €{{ (item.prezzo * item.quantita) | number:'1.2-2' }}
+        <div class="ordine-item-riga">
+          <div class="ordine-item-info">
+            <div class="ordine-item-nome">
+              {{ item.quantita }}x {{ item.nome }}
+            </div>
+            <div class="ordine-item-note" *ngIf="item.note">
+              {{ item.note }}
+            </div>
+          </div>
+          <div class="ordine-item-prezzo">
+            €{{ (item.prezzo * item.quantita) | number:'1.2-2' }}
+          </div>
+        </div>
       </li>
     </ul>
+
     <div class="totale">
       Totale: €{{ getTotale(ordineSelezionato?.ordini) | number:'1.2-2' }}
     </div>
