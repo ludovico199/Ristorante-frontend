@@ -17,7 +17,7 @@
 .tavolo {
   position: relative; /* <-- aggiunto */
   width: 120px;
-  height: 160px;
+  height: 180px;
   background-color: #f8f8f8;
   border-radius: 20px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -164,4 +164,73 @@
   justify-content: center;
   gap: 20px;
   padding: 20px;
+}
+
+.btn-ordine {
+  margin-top: 6px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background-color: #e0e0e0;
+  color: #333;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+  max-width: 100px;
+  align-self: center;
+}
+
+.btn-ordine:hover {
+  background-color: #cfcfcf;
+}
+
+/* Overlay scuro */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.ordine-popup {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  text-align: left;
+}
+.ordine-popup h3 {
+  margin-top: 0;
+}
+.ordine-popup ul {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+.ordine-popup li {
+  margin-bottom: 6px;
+}
+.totale {
+  font-weight: bold;
+  margin: 12px 0;
+}
+.btn-chiudi-tavolo {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #dc3545;
+  color: white;
+  cursor: pointer;
+}
+.btn-chiudi-tavolo:hover {
+  background-color: #a71d2a;
 }

@@ -1,15 +1,15 @@
 <div class="container_tavoli">
   <div class="tavoli">
-    <div class="tavolo" *ngFor="let tavolo of tavoli" (click)="gestiscitavolo(tavolo)">
-
+    <div
+      class="tavolo"
+      *ngFor="let tavolo of tavoli"
+      (click)="gestiscitavolo(tavolo)"
+    >
       <div class="tavolo_icona" [ngClass]="getClasseTavolo(tavolo)"></div>
-
-      <!-- Bottone reset (chiama toggleMenu) -->
-      <div class="tavolo_reset" (click)="toggleMenu(tavolo, $event)">×</div>
-
-      <!-- Menu contestuale (visualizzato solo quando mostraMenu è true) -->
       <div class="tavolo_menu" *ngIf="tavolo.mostraMenu">
-        <div class="tavolo_menu_item" (click)="chiudiTavolo(tavolo, $event)">Chiudi tavolo</div>
+        <div class="tavolo_menu_item" (click)="chiudiTavolo(tavolo, $event)">
+          Chiudi tavolo
+        </div>
       </div>
 
       <div class="tavolo_numero">T{{ tavolo.numero_tavolo }}</div>
@@ -19,21 +19,49 @@
           <div class="tavolo_posti"></div>
           <div>{{ tavolo.numero_coperti }}</div>
         </div>
-        <div class="tavolo_dati">
-          <div class="tavolo_stato">
-            {{ tavolo.stato }}
+        <ng-container *ngIf="tavolo.numero_coperti > 0">
+          <div class="tavolo_dati">
+            <div class="tavolo_stato">{{ tavolo.stato }}</div>
           </div>
-        </div>
-      </div>
+        </ng-container>
     </div>
+    <ng-container *ngIf="tavolo.numero_coperti > 0">
+      <button class="btn-ordine" (click)="apriOrdine(tavolo, $event)">
+        Ordine
+      </button>
+    </ng-container>
   </div>
 </div>
 
-<!-- Menu -->
+<!-- Overlay Ordine -->
+<div
+  class="overlay"
+  *ngIf="ordineAperto"
+  (click)="chiudiOverlay()"
+>
+  <div class="ordine-popup" (click)="$event.stopPropagation()">
+    <h3>Ordine Tavolo T{{ ordineSelezionato?.numero_tavolo }}</h3>
+    <ul>
+      <li *ngFor="let item of ordineSelezionato?.ordini">
+        {{ item.quantita }}x {{ item.nome }} — €{{ (item.prezzo * item.quantita) | number:'1.2-2' }}
+      </li>
+    </ul>
+    <div class="totale">
+      Totale: €{{ getTotale(ordineSelezionato?.ordini) | number:'1.2-2' }}
+    </div>
+    <button
+      class="btn-chiudi-tavolo"
+      (click)="chiudiTavolo(ordineSelezionato, $event)"
+    >
+      Chiudi Tavolo
+    </button>
+  </div>
+</div>
+
+<!-- Componenti esistenti -->
 <app-menu [isVisible]="isMenuVisible" (closeMenu)="chiudiMenu()"></app-menu>
-<!-- Coperti -->
 <app-coperti
   [tavoloId]="tavoloSelezionato?.id"
   [isVisible]="isCopertiVisible"
-  (closeCoperti)="chiudiCoperti()">
-</app-coperti>
+  (closeCoperti)="chiudiCoperti()"
+></app-coperti>

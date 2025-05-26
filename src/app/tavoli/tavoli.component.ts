@@ -36,6 +36,10 @@ export class TavoliComponent implements OnInit, OnDestroy {
   TavoloAperto: boolean = false;
   comandaId: number = 1;
 
+  // Nuove proprietà per overlay Ordine
+  ordineAperto: boolean = false;
+  ordineSelezionato: any = null;
+
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -49,12 +53,12 @@ export class TavoliComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.caricaTavoli();
     this.ascoltaCoperti();
-    this.applicationRef.isStable.pipe(first((isStable) => isStable)).subscribe(() => {
-      this.iniziaControlloTavoli();
-    });
-    this.ordineService.tavoloId$.subscribe(tavoloId => {});
+    this.applicationRef.isStable
+      .pipe(first(isStable => isStable))
+      .subscribe(() => this.iniziaControlloTavoli());
 
-    this.ordineService.numeroCoperti$.subscribe(coperti => {});
+    this.ordineService.tavoloId$.subscribe();
+    this.ordineService.numeroCoperti$.subscribe();
     this.ordineService.tavoloStatus$.subscribe(status => {
       this.tavoloStatus = status;
     });
@@ -69,10 +73,15 @@ export class TavoliComponent implements OnInit, OnDestroy {
   private iniziaControlloTavoli() {
     if (!this.tavoliInterval) {
       this.tavoliInterval = setInterval(() => {
-        if (!this.isMenuVisible && !this.isCopertiVisible && !this.TavoloAperto) {
+        if (
+          !this.isMenuVisible &&
+          !this.isCopertiVisible &&
+          !this.TavoloAperto &&
+          !this.ordineAperto
+        ) {
           this.caricaTavoli();
         }
-      },50000000);
+      }, 50000000);
     }
   }
 
@@ -87,18 +96,22 @@ export class TavoliComponent implements OnInit, OnDestroy {
     this.http.get<any[]>('http://localhost:8000/api/tavoli').subscribe({
       next: (response) => {
         this.tavoli = response.map(tavolo => {
-          // se non esiste ordini, inizializza array vuoto
-          const ordini = tavolo.ordini ?? [];
-          const ordiniAttivi = ordini.filter((o: any) => o.stato_ordine_id !== 2);
-          const stato = ordiniAttivi.length > 0 ? 'IN CORSO' : 'TERMINATO';
-          return {
-            ...tavolo,
-            stato
-          };
+          const righeOrdine = tavolo.righe_ordine ?? [];
+  
+          const ordini = righeOrdine.map((item: any) => ({
+            nome: item.menu?.nome || 'Voce sconosciuta',
+            prezzo: item.menu?.prezzo || 0,
+            quantita: item.quantita,
+            comanda_id: item.comanda_id ?? 'NO'
+          }));
+  
+          const stato = ordini.length > 0 ? 'IN CORSO' : 'TERMINATO';
+  
+          return { ...tavolo, ordini, stato };
         });
   
         if (this.tavoloSelezionato) {
-          this.tavoloSelezionato = 
+          this.tavoloSelezionato =
             this.tavoli.find(t => t.id === this.tavoloSelezionato.id) || null;
         }
   
@@ -110,7 +123,7 @@ export class TavoliComponent implements OnInit, OnDestroy {
     });
   }
   
-  
+
   toggleMenu(tavolo: any, event: MouseEvent): void {
     event.stopPropagation();
     const isCurrentlyOpen = tavolo.mostraMenu;
@@ -125,7 +138,8 @@ export class TavoliComponent implements OnInit, OnDestroy {
 
     // Imposta coperti a 0 via API
     this.http.put(`http://localhost:8000/api/coperti/${tavolo.id}`, { coperti: 0 }).subscribe({
-      next: (response) => {
+      next: () => {
+        this.chiudiOverlay();
         this.caricaTavoli(); // aggiorna la lista dei tavoli
       },
       error: (err) => {
@@ -134,28 +148,20 @@ export class TavoliComponent implements OnInit, OnDestroy {
     });
   }
 
-
   private ascoltaCoperti() {
     if (this.tavoloSelezionato) {
       const tavoloId = this.tavoloSelezionato.id;
       const coperti = this.tavoloSelezionato.numero_coperti;
 
-      // Modifica i coperti direttamente attraverso l'API
       this.http.put(`http://localhost:8000/api/coperti/${tavoloId}`, { coperti }).subscribe({
-        next: (response) => {
-          this.caricaTavoli();  // Ricarica i tavoli per riflettere i cambiamenti
-        },
-        error: (err) => {
-          console.error('Errore nell\'aggiornamento dei coperti:', err);
-        }
+        next: () => this.caricaTavoli(),
+        error: (err) => console.error('Errore nell\'aggiornamento dei coperti:', err)
       });
     }
   }
 
   selezionaTavolo(id: number) {
     this.ordineService.setTavoloId(id);
-
-    // Trova il tavolo e aggiorna anche il numero di coperti
     const tavolo = this.tavoli.find(t => t.id === id);
     if (tavolo) {
       this.ordineService.setTavoloEcoperti(tavolo.id, tavolo.numero_coperti);
@@ -163,8 +169,8 @@ export class TavoliComponent implements OnInit, OnDestroy {
   }
 
   getClasseTavolo(tavolo: any): string {
-    const coperti = tavolo.numero_coperti;
-    return (coperti === null || coperti === undefined || Number(coperti) === 0) ? 'tavolo_libero' : 'tavolo_occupato';
+    const coperti = Number(tavolo.numero_coperti || 0);
+    return coperti > 0 ? 'tavolo_occupato' : 'tavolo_libero';
   }
 
   toggleVisibility(tavolo: any) {
@@ -191,10 +197,9 @@ export class TavoliComponent implements OnInit, OnDestroy {
   }
 
   gestiscitavolo(tavolo: any) {
-    this.selezionaTavolo(tavolo.id); // Aggiungi questa riga per selezionare il tavolo
+    this.selezionaTavolo(tavolo.id);
     this.TavoloAperto = true;
 
-    // Verifica corretta se il numero di coperti è 0 o meno
     if (tavolo.numero_coperti === 0) {
       this.apricopoerti(tavolo);
     } else {
@@ -207,29 +212,37 @@ export class TavoliComponent implements OnInit, OnDestroy {
   aprimenu(tavolo: any): void {
     this.TavoloAperto = true;
     this.isMenuVisible = true;
-    this.fermaAggiornamentoTavoli(); // Ferma il timer quando il menu è visibile
+    this.fermaAggiornamentoTavoli();
   }
 
   apricopoerti(tavolo: any): void {
     this.tavoloSelezionato = tavolo;
     this.isCopertiVisible = true;
-    this.fermaAggiornamentoTavoli(); // Ferma il timer quando i coperti sono visibili
+    this.fermaAggiornamentoTavoli();
   }
 
   riprendiAggiornamentoTavoli() {
-    if (!this.isMenuVisible && !this.isCopertiVisible && !this.tavoliInterval) {
+    if (!this.isMenuVisible && !this.isCopertiVisible && !this.TavoloAperto && !this.ordineAperto) {
       this.iniziaControlloTavoli();
     }
   }
 
+  /*** Funzioni Overlay Ordine ***/
+  apriOrdine(tavolo: any, event: MouseEvent): void {
+    event.stopPropagation();
+    console.log('DEBUG apriOrdine: tavolo:', tavolo);
+    console.log('DEBUG apriOrdine: tavolo.ordini:', tavolo.ordini);
+    this.ordineSelezionato = tavolo;
+    this.ordineAperto = true;
+    this.fermaAggiornamentoTavoli();
+  }
 
-  private controllaStatoTavolo(): void {
-    // Verifica se ci sono ordini attivi
-    const ordiniAttivi = this.tavoloSelezionato?.ordini?.filter((ordine: any) => ordine.stato_ordine_id !== 2);
-    if (ordiniAttivi && ordiniAttivi.length === 0) {
-      this.tavoloStatus = 'TERMINATO';
-    } else {
-      this.tavoloStatus = 'IN CORSO';
-    }
+  chiudiOverlay(): void {
+    this.ordineAperto = false;
+    this.riprendiAggiornamentoTavoli();
+  }
+
+  getTotale(ordini: any[]): number {
+    return ordini?.reduce((sum, o) => sum + ((o.prezzo || 0) * (o.quantita || 1)), 0) || 0;
   }
 }

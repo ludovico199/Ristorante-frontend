@@ -214,6 +214,7 @@ export class MenuComponent {
         next: (response) => {
           this.OrdineMenu = [];
           this.aggiornaListaOrdine();
+          this.isCheckMenuVisible = false; // 👈 chiude CheckMenu
         },
         error: (err) => {
           console.error('Errore nell’invio dell’ordine:', err);
