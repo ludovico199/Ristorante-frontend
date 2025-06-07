@@ -23,7 +23,16 @@ export class MenuDashboardComponent implements OnInit {
   ricercaAttiva = false;
   sortKey: SortKey = '';
   sortDir: SortDirection = 1;
-  nuovaVoce = { nome: '', prezzo: 0, quantita: 0, tipologia_id: null as number | null };
+  expandedItemId: number | null = null;
+  nuovoIngrediente = '';
+nuovaVoce = {
+  nome: '',
+  prezzo: 0,
+  quantita: 0,
+  tipologia_id: null,
+  ingredienti: [] as string[]
+};
+
 
   constructor(private menuDashboardService: MenuDashboardService) {}
 
@@ -41,7 +50,11 @@ export class MenuDashboardComponent implements OnInit {
       next: data => {
         this.menuItems = data.map(item => {
           const tipo = this.tipologie.find(t => t.id === item.tipologia_id);
-          return { ...item, tipologia: tipo?.descrittivo || '' };
+          return {
+            ...item,
+            tipologia: tipo?.descrittivo || '',
+            ingredienti: item.ingredienti ?? []
+          };          
         });
         if (this.ricercaAttiva) {
           this.onSearch();
@@ -71,9 +84,7 @@ export class MenuDashboardComponent implements OnInit {
       }
       const sa = ('' + av).toLowerCase();
       const sb = ('' + bv).toLowerCase();
-      if (sa < sb) return -1 * this.sortDir;
-      if (sa > sb) return 1 * this.sortDir;
-      return 0;
+      return sa < sb ? -1 * this.sortDir : sa > sb ? 1 * this.sortDir : 0;
     });
   }
 
@@ -97,13 +108,18 @@ export class MenuDashboardComponent implements OnInit {
     this.applySort();
   }
 
+  toggleDetails(item: any): void {
+    this.expandedItemId = this.expandedItemId === item.id ? null : item.id;
+  }
+
   aggiungiMenu(): void {
     this.menuDashboardService.addMenuItem(this.nuovaVoce).subscribe(() => {
       this.mostraFormAggiunta = false;
-      this.nuovaVoce = { nome: '', prezzo: 0, quantita: 0, tipologia_id: null };
+      this.nuovaVoce = { nome: '', prezzo: 0, quantita: 0, tipologia_id: null, ingredienti: [] };
       this.loadMenu();
     });
   }
+  
 
   Rimuovi(id: number): void {
     this.menuDashboardService.deleteMenuItem(id).subscribe(() => this.loadMenu());
@@ -118,16 +134,31 @@ export class MenuDashboardComponent implements OnInit {
       nome: this.selectedItem.nome,
       prezzo: this.selectedItem.prezzo,
       quantita: this.selectedItem.quantita,
-      tipologia_id: this.selectedItem.tipologia_id
+      tipologia_id: this.selectedItem.tipologia_id,
+      ingredienti: this.selectedItem.ingredienti || []
     };
+  
     this.menuDashboardService.updateMenuItem(this.selectedItem.id, updated)
       .subscribe(() => {
         this.selectedItem = null;
         this.loadMenu();
       });
   }
+  
 
   annullaModifica(): void {
     this.selectedItem = null;
+  }
+
+  aggiungiIngrediente(): void {
+    const trimmed = this.nuovoIngrediente.trim();
+    if (trimmed) {
+      this.nuovaVoce.ingredienti.push(trimmed);
+      this.nuovoIngrediente = '';
+    }
+  }
+
+  rimuoviIngrediente(index: number): void {
+    this.nuovaVoce.ingredienti.splice(index, 1);
   }
 }

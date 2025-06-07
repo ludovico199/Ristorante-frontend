@@ -38,7 +38,7 @@
   (click)="chiudiOverlay()"
 >
   <div class="ordine-popup" (click)="$event.stopPropagation()">
-    <h3>Ordine Tavolo T{{ ordineSelezionato?.numero_tavolo }}</h3>
+    <h3>T{{ ordineSelezionato?.numero_tavolo }}</h3>
     <ul>
       <li *ngFor="let item of ordineSelezionato?.ordini">
         <div class="ordine-item-riga">

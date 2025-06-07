@@ -81,7 +81,7 @@ export class TavoliComponent implements OnInit, OnDestroy {
         ) {
           this.caricaTavoli();
         }
-      }, 50000000);
+      }, 5000);
     }
   }
 
@@ -97,18 +97,29 @@ export class TavoliComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.tavoli = response.map(tavolo => {
           const righeOrdine = tavolo.righe_ordine ?? [];
-          const ordini = righeOrdine.map((item: any) => {
-            const ordine = {
-              nome: item.menu?.nome || 'Voce sconosciuta',
-              prezzo: item.menu?.prezzo || 0,
-              quantita: item.quantita,
-              comanda_id: item.comanda_id ?? 'NO',
-              note: item.note || ''
-            };
-            console.log('📦 Riga ordine caricata:', ordine);
-            return ordine;
+  
+          // Aggrega gli ordini uguali, ignorando comanda_id
+          const ordini: any[] = [];
+  
+          righeOrdine.forEach((item: any) => {
+            const nome = item.menu?.nome || 'Voce sconosciuta';
+            const prezzo = item.menu?.prezzo || 0;
+            const quantita = item.quantita;
+            const note = item.note || '';
+  
+            // Cerca un item identico già aggiunto (ignorando comanda_id)
+            const esistente = ordini.find(o =>
+              o.nome === nome &&
+              o.prezzo === prezzo &&
+              o.note === note
+            );
+  
+            if (esistente) {
+              esistente.quantita += quantita;
+            } else {
+              ordini.push({ nome, prezzo, quantita, note });
+            }
           });
-          
   
           const stato = ordini.length > 0 ? 'IN CORSO' : 'TERMINATO';
   
@@ -127,6 +138,8 @@ export class TavoliComponent implements OnInit, OnDestroy {
       }
     });
   }
+  
+  
   
 
   toggleMenu(tavolo: any, event: MouseEvent): void {

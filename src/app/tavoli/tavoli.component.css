@@ -17,6 +17,7 @@ body{
 }
 
 .tavolo {
+  cursor: pointer;
   position: relative; /* <-- aggiunto */
   width: 120px;
   height: 170px;

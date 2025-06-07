@@ -27,6 +27,19 @@
         <option *ngFor="let tipo of tipologie" [value]="tipo.id">{{ tipo.descrittivo }}</option>
       </select>
     </label>
+
+    <!-- Sezione aggiunta ingredienti -->
+    <label>Ingredienti:</label>
+    <div style="display: flex; gap: 8px; margin-bottom: 1rem;">
+      <input [(ngModel)]="nuovoIngrediente" name="ingrediente" placeholder="Aggiungi ingrediente..." />
+      <button type="button" (click)="aggiungiIngrediente()">+</button>
+    </div>
+    <ul class="items-list">
+      <li *ngFor="let ing of nuovaVoce.ingredienti; let i = index">
+        {{ ing }}
+        <button type="button" (click)="rimuoviIngrediente(i)">x</button>
+      </li>
+    </ul>
     <button type="submit">Invia</button>
     <button type="button" (click)="mostraFormAggiunta = false">Annulla</button>
   </form>
@@ -51,21 +64,33 @@
     </tr>
   </thead>
   <tbody>
-    <tr
-      *ngFor="let item of (ricercaAttiva ? filteredItems : menuItems)"
-      [class.highlight]="ricercaAttiva && item.nome.toLowerCase().includes(searchTerm.toLowerCase())"
-    >
-      <td>{{ item.nome }}</td>
-      <td>{{ item.tipologia }}</td>
-      <td>{{ item.prezzo | currency: 'EUR' }}</td>
-      <td>{{ item.quantita }}</td>
-      <td class="actions">
-        <button (click)="Modifica(item)">Modifica</button>
-        <button (click)="Rimuovi(item.id)">Cancella</button>
-      </td>
-    </tr>
+    <ng-container *ngFor="let item of (ricercaAttiva ? filteredItems : menuItems)">
+      <tr
+        (click)="toggleDetails(item)"
+        [class.highlight]="ricercaAttiva && item.nome.toLowerCase().includes(searchTerm.toLowerCase())"
+      >
+        <td>{{ item.nome }}</td>
+        <td>{{ item.tipologia }}</td>
+        <td>{{ item.prezzo | currency: 'EUR' }}</td>
+        <td style="text-align: center;">{{ item.quantita }}</td>
+        <td class="actions">
+          <button (click)="Modifica(item); $event.stopPropagation()">Modifica</button>
+          <button (click)="Rimuovi(item.id); $event.stopPropagation()">Cancella</button>
+        </td>
+      </tr>
+      <tr *ngIf="expandedItemId === item.id">
+        <td colspan="5">
+          <strong>Ingredienti:</strong>
+          <ul class="items-list" *ngIf="item.ingredienti?.length > 0; else nessuno">
+            <li *ngFor="let ing of item.ingredienti">{{ ing }}</li>
+          </ul>
+          <ng-template #nessuno><em>Nessun ingrediente disponibile</em></ng-template>
+        </td>
+      </tr>
+    </ng-container>
   </tbody>
 </table>
+
 <p *ngIf="(ricercaAttiva ? filteredItems : menuItems).length === 0">
   Nessun elemento nel menu.
 </p>

@@ -3,8 +3,14 @@
 <table *ngIf="ordini.length > 0">
   <thead>
     <tr>
-      <th>Data / Ora</th>
-      <th>Totale (€)</th>
+      <th (click)="onSort('data')">
+        Data / Ora
+        <span *ngIf="sortKey === 'data'">{{ sortDir === 1 ? '▲' : '▼' }}</span>
+      </th>
+      <th (click)="onSort('totale')">
+        Totale (€)
+        <span *ngIf="sortKey === 'totale'">{{ sortDir === 1 ? '▲' : '▼' }}</span>
+      </th>
       <th></th>
     </tr>
   </thead>
@@ -18,7 +24,7 @@
         </td>
       </tr>
       <tr *ngIf="expandedOrderId === o.id">
-        <td colspan="4">
+        <td colspan="3">
           <ul class="items-list">
             <li *ngFor="let it of parsedItems">
               {{ it.nome }} × {{ it.quantita }} — €{{ it.prezzo }}

@@ -36,14 +36,28 @@ export class MenuDashboardService {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  addMenuItem(menuItem: { nome: string; prezzo: number; tipologia_id: number | null }): Observable<any> {
+  addMenuItem(menuItem: {
+    nome: string;
+    prezzo: number;
+    quantita: number;
+    tipologia_id: number | null;
+    ingredienti: string[];
+  }): Observable<any> {
     return this.http.post<any>(this.apiUrl, menuItem);
   }
-
-  updateMenuItem(id: number, menuItem: { nome?: string; prezzo?: number; tipologia_id?: number }): Observable<any> {
+  
+  updateMenuItem(id: number, menuItem: {
+    nome?: string;
+    prezzo?: number;
+    quantita?: number;
+    tipologia_id?: number;
+    ingredienti?: string[];
+  }): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, menuItem);
   }
-
+  
+  
+  
   deleteMenuItem(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }

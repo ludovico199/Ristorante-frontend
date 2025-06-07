@@ -1,11 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule, NgClass } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { FilterByCategoryPipe } from '../filter-by-category.pipe';
 import { OrdineService } from '../servizi/ordine-service.service';
-import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-menu',
@@ -31,7 +30,6 @@ export class MenuComponent {
   numeroCoperti: number | null = null;
   listaOrdine: any[] = [];
   isCheckMenuVisible: boolean = false;
-  turni: (number | string)[] = [...[1, 2, 3, 4, 5, 6], 'NO'];
   ordineConfermato: any[] = [];
   ordiniEsistenti: any[] = [];
 
@@ -41,7 +39,15 @@ export class MenuComponent {
 
   ordiniCombinati = [...this.ordiniEsistenti, ...this.ordineConfermato];
 
-  constructor(private http: HttpClient, private ordineService: OrdineService, private cdr: ChangeDetectorRef) {}
+  // Nuove proprietà per overlay “info ingredienti”
+  infoOverlayVisible: boolean = false;
+  infoItem: any | null = null;
+
+  constructor(
+    private http: HttpClient,
+    private ordineService: OrdineService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.caricaMenu();
@@ -125,10 +131,10 @@ export class MenuComponent {
 
         this.listaOrdine = this.listaOrdine.filter(i => !(i.menu_id === item.menu_id && i.comanda_id === item.comanda_id));
 
-        this.listaOrdineGruppata = this.listaOrdine.reduce((acc, item) => {
-          const turno = item.turno?.toString();
+        this.listaOrdineGruppata = this.listaOrdine.reduce((acc, it) => {
+          const turno = it.turno?.toString();
           if (!acc[turno]) acc[turno] = [];
-          acc[turno].push(item);
+          acc[turno].push(it);
           return acc;
         }, {});
       }
@@ -212,10 +218,10 @@ export class MenuComponent {
         })
       ];
 
-      this.listaOrdineGruppata = this.listaOrdine.reduce((acc, item) => {
-        const turno = item.turno?.toString();
+      this.listaOrdineGruppata = this.listaOrdine.reduce((acc, it) => {
+        const turno = it.turno?.toString();
         if (!acc[turno]) acc[turno] = [];
-        acc[turno].push(item);
+        acc[turno].push(it);
         return acc;
       }, {
         '1': [], '2': [], '3': [], '4': [], '5': [], '6': [], 'NO': []
@@ -250,10 +256,10 @@ export class MenuComponent {
       })
     ];
 
-    this.listaOrdineGruppata = this.listaOrdine.reduce((acc, item) => {
-      const turno = item.turno?.toString();
+    this.listaOrdineGruppata = this.listaOrdine.reduce((acc, it) => {
+      const turno = it.turno?.toString();
       if (!acc[turno]) acc[turno] = [];
-      acc[turno].push(item);
+      acc[turno].push(it);
       return acc;
     }, {});
   }
@@ -262,10 +268,10 @@ export class MenuComponent {
     this.OrdineMenu = this.OrdineMenu.filter(i => i.menu_id !== item.menu_id || i.comanda_id !== item.comanda_id);
     this.listaOrdine = this.listaOrdine.filter(i => i.menu_id !== item.menu_id || i.comanda_id !== item.comanda_id);
 
-    this.listaOrdineGruppata = this.listaOrdine.reduce((acc, item) => {
-      const turno = item.turno?.toString();
+    this.listaOrdineGruppata = this.listaOrdine.reduce((acc, it) => {
+      const turno = it.turno?.toString();
       if (!acc[turno]) acc[turno] = [];
-      acc[turno].push(item);
+      acc[turno].push(it);
       return acc;
     }, {});
   }
@@ -279,5 +285,13 @@ export class MenuComponent {
         }
       });
     }
+  }
+  mostraInfo(item: any) {
+    this.infoItem = item;
+    this.infoOverlayVisible = true;
+  }
+  chiudiInfo() {
+    this.infoOverlayVisible = false;
+    this.infoItem = null;
   }
 }

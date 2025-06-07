@@ -10,98 +10,124 @@
       class="menu_tipologia"
       *ngFor="let tipologia of tipologie"
       [class.active]="tipologia.attiva"
-      (click)="selezionaCategoria(tipologia)" 
+      (click)="selezionaCategoria(tipologia)"
     >
       {{ tipologia.descrittivo }}
     </div>
   </div>
-<!-- Lista Item Menu -->
 
-<div class="item_list_container">
-  <div *ngFor="let item of menu | filterByCategory: tipologiaSelezionata"
-  class="item_container"
-  (click)="apriGestioneQuantita(item)">
-<div class="item_nome">{{ item.nome }}</div>
-<div class="item_prezzo">{{ item.prezzo }}</div>
-<div class="item_tipologia" [ngStyle]="{ 'background-color': item.colore }"></div>
-
-
-<!-- Menu Per Aggiungere Item -->
-
-<form (ngSubmit)="CreaListaOrdine(item)">
-  <div class="ItemOrdine_Container" *ngIf="itemSelezionato === item" (click)="chiudiGestioneQuantita($event)">
-    <div class="ItemOrdine_Menu" (click)="$event.stopPropagation()">
-      <div class="ItemOrdine_Nome"><h2>{{ item.nome }}</h2></div>
-      <div class="ItemOrdine_QuantitaItem">
-        <button type="button" class="ItemOrdine_QuantitaItem_Minus" (click)="decrementa(item)">-</button>
-        <input class="ItemOrdine_QuantitaItem_Screen" type="number" [(ngModel)]="item.quantita" min="1" name="quantita">
-        <button type="button" class="ItemOrdine_QuantitaItem_Plus" (click)="incrementa(item)">+</button>
+  <!-- Lista Item Menu -->
+  <div class="item_list_container">
+    <div
+      *ngFor="let item of menu | filterByCategory: tipologiaSelezionata"
+      class="item_container"
+      (click)="apriGestioneQuantita(item)"
+    >
+      <!-- Nome e prezzo -->
+      <div class="item_nome">{{ item.nome }}</div>
+      <div class="item_prezzo_row">
+        <div class="item_prezzo">{{ item.prezzo }}</div>
+        <!-- Icona info solo se ci sono ingredienti -->
+        <div
+          *ngIf="item.ingredienti?.length > 0"
+          class="item_info_icon"
+          (click)="mostraInfo(item); $event.stopPropagation()"
+          title="Mostra ingredienti"
+        ></div>
       </div>
-      <div class="ItemOrdine_Note">
-        <textarea class="ItemOrdine_Note_Screen" [(ngModel)]="item.note" name="note" placeholder="Note"></textarea>
+
+      <!-- Etichetta tipologia colore -->
+      <div class="item_tipologia" [ngStyle]="{ 'background-color': item.colore }"></div>
+
+      <!-- Form di gestione quantità -->
+      <form (ngSubmit)="CreaListaOrdine(item)">
+        <div
+          class="ItemOrdine_Container"
+          *ngIf="itemSelezionato === item"
+          (click)="chiudiGestioneQuantita($event)"
+        >
+          <div class="ItemOrdine_Menu" (click)="$event.stopPropagation()">
+            <div class="ItemOrdine_Nome"><h2>{{ item.nome }}</h2></div>
+            <div class="ItemOrdine_QuantitaItem">
+              <button type="button" class="ItemOrdine_QuantitaItem_Minus" (click)="decrementa(item)">-</button>
+              <input class="ItemOrdine_QuantitaItem_Screen" type="text" [value]="item.quantita" readonly>
+              <button type="button" class="ItemOrdine_QuantitaItem_Plus" (click)="incrementa(item)">+</button>
+            </div>
+            <div class="ItemOrdine_Note">
+              <textarea class="ItemOrdine_Note_Screen" [(ngModel)]="item.note" name="note" placeholder="Note"></textarea>
+            </div>
+            <h3 style="margin-bottom: 0px;">Turno N°</h3>
+            <div class="ItemOrdine_Lista">
+              <div
+                class="ItemOrdine_Turno_1"
+                [ngClass]="{'active': TurnoSelezionato === 1}"
+                (click)="GestioneTurni(1)"
+              >1</div>
+              <div
+                class="ItemOrdine_Turno_2"
+                [ngClass]="{'active': TurnoSelezionato === 2}"
+                (click)="GestioneTurni(2)"
+              >2</div>
+              <div
+                class="ItemOrdine_Turno_3"
+                [ngClass]="{'active': TurnoSelezionato === 3}"
+                (click)="GestioneTurni(3)"
+              >3</div>
+              <div
+                class="ItemOrdine_Turno_4"
+                [ngClass]="{'active': TurnoSelezionato === 4}"
+                (click)="GestioneTurni(4)"
+              >4</div>
+              <div
+                class="ItemOrdine_Turno_5"
+                [ngClass]="{'active': TurnoSelezionato === 5}"
+                (click)="GestioneTurni(5)"
+              >5</div>
+            </div>
+            <div class="ItemOrdine_InviaOrdine">
+              <button type="submit" class="ItemOrdine_InviaOrdine_Bottone">AGGIUNGI</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Overlay Info Ingredienti (fuori dal loop) -->
+  <div
+    *ngIf="infoOverlayVisible"
+    class="ItemOrdine_Container"
+    (click)="chiudiInfo()"
+  >
+    <div class="info-popup" (click)="$event.stopPropagation()">
+      <h3>{{ infoItem?.nome }}</h3>
+      <ul>
+        <li *ngFor="let ing of infoItem?.ingredienti">
+          {{ ing }}
+        </li>
+      </ul>
+      <button class="btn-chiudi-info" (click)="chiudiInfo()">Chiudi</button>
+    </div>
+  </div>
+
+  <!-- Navbar Inferiore -->
+  <div class="menu_navbar_inferiore">
+    <div class="tavoli_bottone_container">
+      <div class="tavoli" (click)="chiudiMenu()">
+        <img src="/assets/tavolo_icona.png" alt="Tavolo">
       </div>
-      <h3 style="margin-bottom: 0px;">Turno N°</h3>
-      <div class="ItemOrdine_Lista">
-        <div
-          class="ItemOrdine_Turno_1"
-          [ngClass]="{'active': TurnoSelezionato === 1}"
-          (click)="GestioneTurni(1)"
-        >1</div>
-
-        <div
-          class="ItemOrdine_Turno_2"
-          [ngClass]="{'active': TurnoSelezionato === 2}"
-          (click)="GestioneTurni(2)"
-        >2</div>
-
-        <div
-          class="ItemOrdine_Turno_3"
-          [ngClass]="{'active': TurnoSelezionato === 3}"
-          (click)="GestioneTurni(3)"
-        >3</div>
-
-        <div
-          class="ItemOrdine_Turno_4"
-          [ngClass]="{'active': TurnoSelezionato === 4}"
-          (click)="GestioneTurni(4)"
-        >4</div>
-
-        <div
-          class="ItemOrdine_Turno_5"
-          [ngClass]="{'active': TurnoSelezionato === 5}"
-          (click)="GestioneTurni(5)"
-        >5</div>
+    </div>
+    <div class="ListaOrdine_bottone_container">
+      <div class="ListaOrdine" (click)="CheckMenu()">
+        <img src="/assets/lista_icona.png" alt="Lista Ordine">
       </div>
-      <div class="ItemOrdine_InviaOrdine">
-        <button type="submit" class="ItemOrdine_InviaOrdine_Bottone">AGGIUNGI</button>
+    </div>
+    <div class="InviaOrdine_bottone_container">
+      <div class="InviaOrdine" (click)="inviaOrdine()">
+        <img src="/assets/cucina_icona.png" alt="Invia Ordine">
       </div>
     </div>
   </div>
-</form>
-
-</div>
-</div>
-
-<!-- Navbar Inferiore -->
-
-<div class="menu_navbar_inferiore">
-  <div class="tavoli_bottone_container">
-    <div class="tavoli" (click)="chiudiMenu()">
-      <img src="/assets/tavolo_icona.png" alt="Tavolo">
-    </div>
-  </div>
-  <div class="ListaOrdine_bottone_container">
-    <div class="ListaOrdine" (click)="CheckMenu()">
-      <img src="/assets/lista_icona.png" alt="Lista Ordine">
-    </div>
-  </div>
-  <div class="InviaOrdine_bottone_container">
-    <div class="InviaOrdine" (click)="inviaOrdine()">
-      <img src="/assets/cucina_icona.png" alt="Invia Ordine">
-    </div>
-  </div>
-</div>
-
 <!-- Check Menu -->
 <div class="CheckMenu_container" *ngIf="isCheckMenuVisible">
   <div class="CheckMenu">

@@ -144,7 +144,7 @@
   text-overflow: ellipsis;
   padding-top: 15px;
   max-width: 100%;
-  width: 100%;
+  width: 70%;
   padding-bottom: 25px;
 }
 
@@ -254,6 +254,19 @@
   width: 100%;
   height: 40px;
   margin-block: 20px;
+}
+.item_info_icon {
+  width: 30px;
+  height: 39px;
+  background-image: url('/assets/Info_icona.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.item_prezzo_row{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .ItemOrdine_Turno_1,
@@ -573,3 +586,89 @@ button {
   display: none;
 }
 
+/* ==================================================
+   Overlay per mostrare gli ingredienti (info-popup)
+   ================================================== */
+
+/* Sfondo semitrasparente su tutta la viewport */
+.info-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000; /* al di sopra di tutti gli altri elementi */
+}
+
+/* Riquadro bianco al centro con bordo arrotondato e ombreggiatura */
+.info-popup {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 80%;
+  max-width: 360px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: #333;
+  text-align: left;
+}
+
+.info-popup h3 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.info-popup ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+}
+
+.info-popup li {
+  padding: 6px 0;
+  border-bottom: 1px dashed #ccc;
+  font-size: 1rem;
+}
+
+.info-popup li:last-child {
+  border-bottom: none;
+}
+
+.btn-chiudi-info {
+  display: block;
+  margin: 0.5rem auto 0 auto;
+  padding: 0.5rem 1rem;
+  background-color: #2d4257;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-chiudi-info:hover {
+  background-color: #1b2d3d;
+}
+.item_info_icon {
+  width: 24px;
+  height: 24px;
+  background-image: url('/assets/Info_icona.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.item_info_icon:hover {
+  opacity: 1;
+}

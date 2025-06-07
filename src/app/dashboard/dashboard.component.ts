@@ -105,18 +105,4 @@ export class DashboardComponent implements OnInit {
   annullaModifica(): void {
     this.selectedItem = null;
   }
-
-  
-  aggiungiMenu(): void {
-    this.menuDashboardService.addMenuItem(this.nuovaVoce).subscribe({
-      next: () => {
-        this.mostraFormAggiunta = false;
-        this.nuovaVoce = { nome: '', prezzo: 0, tipologia_id: null };
-        this.getMenu(); // aggiorna lista
-      },
-      error: (error) => {
-        console.error('Errore durante l\'aggiunta:', error);
-      }
-    });
-  }
 }
